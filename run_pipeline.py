@@ -3,6 +3,18 @@ import pandas as pd
 import os
 import shutil
 import sys
+import mlflow
+# --- 1. إعدادات MLflow للتتبع عن بُعد ---
+# يتم سحب هذه المتغيرات من GitHub Secrets عند تشغيل الـ Pipeline
+tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
+mlflow_username = os.getenv("MLFLOW_TRACKING_USERNAME")
+mlflow_password = os.getenv("MLFLOW_TRACKING_PASSWORD")
+
+if tracking_uri:
+    mlflow.set_tracking_uri(tracking_uri)
+    print(f"✅ Remote tracking enabled: {tracking_uri}")
+else:
+    print("ℹ️ Local tracking enabled (mlruns folder).")
 
 # Add src to the system path to allow importing modules (CRITICAL for MLOps structure)
 # This allows the script to find src.data.load_data, etc.

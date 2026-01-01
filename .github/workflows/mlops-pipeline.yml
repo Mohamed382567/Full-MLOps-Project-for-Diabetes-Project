@@ -1,0 +1,56 @@
+name: MLOps CI Pipeline - Training and Artifacts
+
+# Trigger workflow on push to main branch
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Check out repository code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # 3. Install dependencies
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Configure MLflow credentials (Uses GitHub Secrets)
+      # MLFLOW_TRACKING_URI must be set in your GitHub repository secrets.
+      - name: Configure MLflow
+        env: 
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+        run: echo "MLFLOW_TRACKING_URI=$MLFLOW_TRACKING_URI" >> $GITHUB_ENV
+
+      # 5. Execute Training Pipeline
+      # This runs the run_pipeline.py script which orchestrates all steps:
+      # Load -> Validate -> Preprocess -> Feature Engineering -> Train -> MLflow Log
+      - name: Run Full MLOps Pipeline
+        run: python run_pipeline.py
+        
+      # 6. Optional: Verify Artifacts (Check if artifacts folder exists)
+      - name: Verify Artifacts Generated
+        run: |
+          if [ -d "artifacts" ]; then
+            echo "✅ Artifacts folder generated locally by the pipeline."
+          else
+            echo "❌ Artifacts folder not found."
+            exit 1
+          fi
+
+      # 7. Docker Build (Optional step for future deployment)
+      - name: Build Docker Image (Readiness Check)
+        run: docker build -t diabetes-api-ready .

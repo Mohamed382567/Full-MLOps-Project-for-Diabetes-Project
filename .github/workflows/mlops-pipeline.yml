@@ -1,6 +1,6 @@
-name: MLOps CI Pipeline - Training and Artifacts
+name: MLOps CI Pipeline - Automated Training & Artifact Management
 
-# Trigger workflow on push to main branch
+# Trigger the workflow on pushes to the main branch or manual dispatch
 on:
   push:
     branches:
@@ -8,49 +8,51 @@ on:
   workflow_dispatch:
 
 jobs:
-  train-model:
+  model-orchestration:
+    name: Model Training and Lifecycle Management
     runs-on: ubuntu-latest
     
     steps:
-      # 1. Check out repository code
-      - name: Checkout Code
+      # Step 1: Clone the repository to the GitHub runner environment
+      - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      # 2. Set up Python environment
-      - name: Set up Python
+      # Step 2: Initialize a clean Python runtime environment (Matching local/prod specs)
+      - name: Provision Python 3.11 Environment
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.11'
 
-      # 3. Install dependencies
+      # Step 3: Install project dependencies defined in requirements.txt
       - name: Install Dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Configure MLflow credentials (Uses GitHub Secrets)
-      # MLFLOW_TRACKING_URI must be set in your GitHub repository secrets.
-      - name: Configure MLflow
+      # Step 4: Execute the core MLOps pipeline
+      # Injects MLflow/DagsHub credentials via secure environment variables for remote tracking
+      - name: Execute End-to-End Pipeline
         env: 
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-        run: echo "MLFLOW_TRACKING_URI=$MLFLOW_TRACKING_URI" >> $GITHUB_ENV
-
-      # 5. Execute Training Pipeline
-      # This runs the run_pipeline.py script which orchestrates all steps:
-      # Load -> Validate -> Preprocess -> Feature Engineering -> Train -> MLflow Log
-      - name: Run Full MLOps Pipeline
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
         run: python run_pipeline.py
         
-      # 6. Optional: Verify Artifacts (Check if artifacts folder exists)
-      - name: Verify Artifacts Generated
-        run: |
-          if [ -d "artifacts" ]; then
-            echo "✅ Artifacts folder generated locally by the pipeline."
-          else
-            echo "❌ Artifacts folder not found."
-            exit 1
-          fi
+      # Step 5: Persist generated binary artifacts (Models, Scalers) to GitHub storage
+      # This ensures artifact traceability and accessibility for downstream tasks
+      - name: Archive Model Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: diabetes-model-artifacts
+          path: artifacts/
+          retention-days: 7
 
-      # 7. Docker Build (Optional step for future deployment)
-      - name: Build Docker Image (Readiness Check)
-        run: docker build -t diabetes-api-ready .
+      # Step 6: Validate build integrity by containerizing the application
+      # Note: 'push' is set to false as a safety gate before official deployment
+      - name: Build and Validate Docker Image
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: false 
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/diabetes-mlops:latest

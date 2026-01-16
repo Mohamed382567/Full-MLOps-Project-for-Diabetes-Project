@@ -5,4 +5,4 @@ flagged/
 artifacts/
 mlruns/
 .DS_Store
-Thumbs.db
+Thumbs.dbgit rm -r --cached .

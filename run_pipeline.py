@@ -4,8 +4,9 @@ import os
 import shutil
 import sys
 import mlflow
-# --- 1. إعدادات MLflow للتتبع عن بُعد ---
-# يتم سحب هذه المتغيرات من GitHub Secrets عند تشغيل الـ Pipeline
+
+# --- MLFLOW TRACKING SETUP ---
+# Configure MLflow tracking URI and credentials from environment variables
 tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
 mlflow_username = os.getenv("MLFLOW_TRACKING_USERNAME")
 mlflow_password = os.getenv("MLFLOW_TRACKING_PASSWORD")

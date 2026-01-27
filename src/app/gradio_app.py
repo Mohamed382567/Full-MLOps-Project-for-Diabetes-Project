@@ -3,8 +3,7 @@ import requests
 import gradio as gr
 
 # --- SYSTEM CONFIGURATION ---
-# IMPORTANT: 'diabetes_api' is the service name defined in docker-compose.yml
-API_URL = os.getenv("API_URL", "http://diabetes_api:8000/predict")
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8001/predict")
 
 def get_prediction(pregnancies, glucose, bp, skin, insulin, bmi, dpf, age):
     """
@@ -98,12 +97,5 @@ def build_ui():
 
 if __name__ == "__main__":
     app = build_ui()
-
-    import os
-    port = int(os.environ.get("PORT", 7860))
-    
- app.launch(
-        server_name="0.0.0.0", 
-        server_port=port,   
-        share=False
-    )
+    port = int(os.environ.get("PORT", 8000))
+    app.launch(server_name="0.0.0.0", server_port=port, share=False)

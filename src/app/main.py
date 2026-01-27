@@ -36,9 +36,9 @@ class DiabetesInput(BaseModel):
 @app.on_event("startup")
 def load_production_artifacts():
     try:
-        artifacts["model"] = joblib.load("artifacts/model.pkl")
-        artifacts["scaler"] = joblib.load("artifacts/scaler.pkl")
-        artifacts["columns"] = joblib.load("artifacts/columns.pkl")
+        artifacts["model"] = joblib.load("diabetes-model-artifacts/model.pkl")
+        artifacts["scaler"] = joblib.load("diabetes-model-artifacts/scaler.pkl")
+        artifacts["columns"] = joblib.load("diabetes-model-artifacts/columns.pkl")
         print(f"✅ Production System Online. Threshold: {CLASSIFICATION_THRESHOLD}")
     except Exception as e:
         print(f"❌ Initialization Error: {e}")

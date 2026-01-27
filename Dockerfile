@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir gradio==4.19.1
 # Copy everything else
 COPY . .
 
-RUN mkdir -p artifacts
+RUN mkdir -p diabetes-model-artifacts
 
 ENV PORT=8000
 EXPOSE 8000

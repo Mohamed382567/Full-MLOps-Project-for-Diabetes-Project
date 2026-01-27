@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field   
+import uvicorn
 
 # Adding project root for module imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -86,4 +87,6 @@ def predict(data: DiabetesInput):
     except Exception as e:
         print(f"❌ Inference Error: {e}")
         raise HTTPException(status_code=400, detail=str(e))
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8001)
     

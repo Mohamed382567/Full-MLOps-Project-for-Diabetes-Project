@@ -29,4 +29,4 @@ ENV PORT=8000
 EXPOSE 8000
 
 
-CMD python src/app/api.py & sleep 15 && python src/app/gradio_app.py
+CMD python src/app/main.py & sleep 15 && python src/app/gradio_app.py

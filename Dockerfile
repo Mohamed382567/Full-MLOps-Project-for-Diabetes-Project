@@ -28,4 +28,4 @@ RUN mkdir -p artifacts
 ENV PORT=8000
 EXPOSE $PORT
 
-CMD ["python", "gradio_app.py"]
+CMD ["python", "src/app/gradio_app.py"]

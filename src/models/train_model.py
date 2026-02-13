@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 from imblearn.over_sampling import SMOTE
+import mlflow # Added for monitoring
 
 ARTIFACTS_DIR = "artifacts"
 
@@ -27,14 +28,22 @@ def train_model(X, y):
         n_estimators=100, 
         max_depth=10, 
         random_state=42
-        # No class_weight='balanced' here since we used SMOTE
     )
     
     model.fit(X_res, y_res)
 
     # Eval
     preds = model.predict(X_test)
-    print(f"--- Training Complete ---\nAccuracy: {accuracy_score(y_test, preds):.4f}")
+    acc = accuracy_score(y_test, preds) # Extracted for MLflow
+    
+    # --- MLFLOW LOGGING ---
+    # Log parameters and metrics without affecting training flow
+    mlflow.log_param("n_estimators", 100)
+    mlflow.log_param("max_depth", 10)
+    mlflow.log_metric("accuracy", acc)
+    # ----------------------
+
+    print(f"--- Training Complete ---\nAccuracy: {acc:.4f}")
     print(classification_report(y_test, preds))
 
     # Persistence

@@ -14,9 +14,9 @@ This repository contains a professional, production-ready machine learning syste
 ---
 
 ## 📊 Live Monitoring & Demo
-* **Live Web App**: [https://diabetes-mlops-l6uy.onrender.com/]
+* **Live Web App**: [https://diabetes-mlops-l6uy.onrender.com]
 * **MLflow Dashboard**: [https://dagshub.com/Mohamed382567/Full-MLOps-Project-for-Diabetes-Project.mlflow/]
-
+* **The repository for the main notebook project**: [https://github.com/Mohamed382567/Diabetes-Prediction-Project-using-Pima-Indains-Dataset]
 ---
 
 ## 🛠️ Tech Stack

@@ -2,6 +2,8 @@
 
 This repository contains a professional, production-ready machine learning system designed to predict diabetes risk. The project demonstrates a complete **MLOps Lifecycle**, successfully transitioning a research notebook into a containerized, cloud-deployed microservice with automated monitoring and quality assurance.
 
+**Note**: This an educational Project but with more real data this can be implemented professionally in the real word Businesses and not all ages you put will be supported to give you reasonable results due to the used data
+
 ---
 
 ## 🚀 Key Features
